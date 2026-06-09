@@ -1,24 +1,40 @@
-x_vals=[1,2,3,5,8,10]
-y_vals=[3,5,7,11,17,21]
+import random
+
+x_vals = [0,1,2,3,4,5,6,7,8,9,10]
+y_vals = [5,4,3,2,1,0,1,2,3,4,5]
+def relu(z):
+    return max(0,z)
+def drelu(z):
+    return 1 if z>0 else 0
 def train(x_values, y_values):
-    w1=1.0
-    b1=0.0
-    w2=1.0
-    b2=0.0
-    for epoch in range(1000):
+    n=10
+    w=[random.uniform(-0.5, 0.5) for _ in range(n)]
+    v=[random.uniform(-0.5, 0.5) for _ in range(n)]
+    b=[random.uniform(-0.5, 0.5) for _ in range(n)]
+    for epoch in range(5000):
         for xval,yval in zip(x_values, y_values):
-            h=w1*xval+b1
-            y=w2*h+b2
-            gradient_w2=2*(y-yval)*h
-            gradient_b2=2*(y-yval)
-            gradient_w1=2*(y-yval)*w2*xval
-            gradient_b1=2*(y-yval)*w2
-            w1=w1-0.001*gradient_w1
-            b1=b1-0.001*gradient_b1
-            w2=w2-0.001*gradient_w2
-            b2=b2-0.001*gradient_b2
-            print(w1, b1, w2, b2)
-    return w1, b1, w2, b2
-w1, b1, w2, b2=train(x_vals,y_vals)
-print(w1,b1,w2,b2)
-print(w2*(w1*18+b1)+b2)
+            h=[]
+            z=[]
+            for i in range(n):
+                zi=w[i]*xval+b[i]
+                hi=relu(zi)
+                h.append(hi)
+                z.append(zi)
+            y = sum(v[i]*h[i] for i in range(n))
+            for i in range(n):
+                grad_v = 2*(y-yval)*h[i]
+                grad_w = 2*(y-yval)*v[i]*drelu(z[i])*xval
+                grad_b = 2*(y-yval)*v[i]*drelu(z[i])
+                v[i] -= 0.001*grad_v
+                w[i] -= 0.001*grad_w
+                b[i] -= 0.001*grad_b
+    return w, b, v
+def predict(x, w, b, v):
+    y=0
+    for i in range(len(w)):
+        y+=v[i]*relu(w[i]*x+b[i])
+    print(y)
+w, b, v = train(x_vals, y_vals)
+predict(2, w, b, v)
+predict(5, w, b, v)
+predict(8, w, b, v)
