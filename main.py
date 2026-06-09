@@ -11,6 +11,7 @@ def train(x_values, y_values):
     w=[random.uniform(-0.5, 0.5) for _ in range(n)]
     v=[random.uniform(-0.5, 0.5) for _ in range(n)]
     b=[random.uniform(-0.5, 0.5) for _ in range(n)]
+    total_loss=0
     for epoch in range(5000):
         for xval,yval in zip(x_values, y_values):
             h=[]
@@ -28,6 +29,14 @@ def train(x_values, y_values):
                 v[i] -= 0.001*grad_v
                 w[i] -= 0.001*grad_w
                 b[i] -= 0.001*grad_b
+                print(v[i], w[i], b[i])
+        loss = (y - yval) ** 2
+        total_loss += loss
+        print(loss, total_loss)
+    for i in range(len(w)):
+        if w[i] != 0:
+            activation_point = -b[i] / w[i]
+            print(i, activation_point, w[i], v[i])
     return w, b, v
 def predict(x, w, b, v):
     y=0
@@ -38,3 +47,6 @@ w, b, v = train(x_vals, y_vals)
 predict(2, w, b, v)
 predict(5, w, b, v)
 predict(8, w, b, v)
+predict(1.5, w, b, v)
+predict(7.5, w, b, v)
+predict(14, w, b, v)
